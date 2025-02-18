@@ -1,0 +1,47 @@
+services:
+  namenode:
+    image: apache/hadoop:3.3.5
+    container_name: namenode
+    hostname: namenode
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - CORE-SITE.XML_fs.defaultFS=hdfs://namenode:9000
+      - HDFS-SITE.XML.dfs.namenode.name.dir=~/hdfs/namenode
+      - HDFS-SITE.XML_dfs.replication=1
+      - HDFS-SITE.XML_dfs.datanode.data.dir=~/hdfs/datanode
+    volumes:
+      - ./init-namenode.sh:/init-namenode.sh
+    ports:
+      - "9870:9870"
+    command: [ "/bin/bash", "/init-namenode.sh" ]
+
+  datanode1:
+    image: apache/hadoop:3.3.5
+    container_name: datanode1
+    hostname: datanode1
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - CORE-SITE.XML_fs.defaultFS=hdfs://namenode:9000
+      - HDFS-SITE.XML.dfs.namenode.name.dir=~/hdfs/namenode
+      - HDFS-SITE.XML_dfs.replication=1
+      - HDFS-SITE.XML_dfs.datanode.data.dir=~/hdfs/datanode
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "hdfs", "datanode"  ]
+
+  datanode2:
+    image: apache/hadoop:3.3.5
+    container_name: datanode2
+    hostname: datanode2
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - CORE-SITE.XML_fs.defaultFS=hdfs://namenode:9000
+      - HDFS-SITE.XML.dfs.namenode.name.dir=~/hdfs/namenode
+      - HDFS-SITE.XML_dfs.replication=1
+      - HDFS-SITE.XML_dfs.datanode.data.dir=~/hdfs/datanode
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "hdfs", "datanode" ]
